@@ -6,6 +6,8 @@ import { LocationsGrid } from "@/components/sections/LocationsGrid";
 import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { CTASection } from "@/components/sections/CTASection";
+import { TrustBadges } from "@/components/sections/TrustBadges";
+import { GuaranteesSection } from "@/components/sections/GuaranteesSection";
 import { AIContentBlock } from "@/components/ai/AIContentBlock";
 import { SchemaScript } from "@/components/seo/SchemaScript";
 import { SEOHead } from "@/components/seo/SEOHead";
@@ -37,6 +39,8 @@ const Index = () => {
       />
 
       <HeroWithForm />
+      
+      <TrustBadges />
 
       {/* AI-generated intro section */}
       <section className="section-padding bg-muted/30">
@@ -97,6 +101,7 @@ const Index = () => {
         </div>
       </section>
 
+      <GuaranteesSection />
       <FAQSection />
       <CTASection />
     </Layout>

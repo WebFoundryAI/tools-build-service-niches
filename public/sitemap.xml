@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Core Pages -->
   <url>
     <loc>https://exampledrainheroes.co.uk/</loc>
     <changefreq>weekly</changefreq>
@@ -36,6 +37,28 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://exampledrainheroes.co.uk/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/terms</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/cookies</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/sitemap</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- Service Pages -->
+  <url>
     <loc>https://exampledrainheroes.co.uk/services/blocked-drains</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -60,6 +83,65 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  <!-- Sub-Service Pages -->
+  <url>
+    <loc>https://exampledrainheroes.co.uk/services/blocked-drains/blocked-toilet</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/services/blocked-drains/blocked-sink</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/services/blocked-drains/blocked-bath</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/services/drain-unblocking/external-drain-unblocking</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/services/drain-unblocking/internal-drain-unblocking</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/services/cctv-drain-surveys/pre-purchase-survey</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/services/cctv-drain-surveys/drainage-investigation</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/services/drain-jetting/domestic-jetting</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/services/drain-jetting/commercial-jetting</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/services/emergency-drain-services/flooding-emergency</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/services/emergency-drain-services/sewage-emergency</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Location Pages -->
   <url>
     <loc>https://exampledrainheroes.co.uk/location/swindon</loc>
     <changefreq>monthly</changefreq>
@@ -90,6 +172,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  <!-- Service-in-Location Pages (Swindon) -->
   <url>
     <loc>https://exampledrainheroes.co.uk/location/swindon/blocked-drains</loc>
     <changefreq>monthly</changefreq>
@@ -115,6 +199,65 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+
+  <!-- Sub-Service-in-Location Pages (Swindon) -->
+  <url>
+    <loc>https://exampledrainheroes.co.uk/location/swindon/blocked-drains/blocked-toilet</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/location/swindon/blocked-drains/blocked-sink</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/location/swindon/blocked-drains/blocked-bath</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/location/swindon/drain-unblocking/external-drain-unblocking</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/location/swindon/drain-unblocking/internal-drain-unblocking</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/location/swindon/cctv-drain-surveys/pre-purchase-survey</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/location/swindon/cctv-drain-surveys/drainage-investigation</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/location/swindon/drain-jetting/domestic-jetting</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/location/swindon/drain-jetting/commercial-jetting</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/location/swindon/emergency-drain-services/flooding-emergency</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://exampledrainheroes.co.uk/location/swindon/emergency-drain-services/sewage-emergency</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Service-in-Location Pages (Royal Wootton Bassett) -->
   <url>
     <loc>https://exampledrainheroes.co.uk/location/royal-wootton-bassett/blocked-drains</loc>
     <changefreq>monthly</changefreq>
@@ -140,6 +283,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+
+  <!-- Service-in-Location Pages (Highworth) -->
   <url>
     <loc>https://exampledrainheroes.co.uk/location/highworth/blocked-drains</loc>
     <changefreq>monthly</changefreq>
@@ -165,6 +310,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+
+  <!-- Service-in-Location Pages (Purton) -->
   <url>
     <loc>https://exampledrainheroes.co.uk/location/purton/blocked-drains</loc>
     <changefreq>monthly</changefreq>
@@ -190,6 +337,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+
+  <!-- Service-in-Location Pages (Cricklade) -->
   <url>
     <loc>https://exampledrainheroes.co.uk/location/cricklade/blocked-drains</loc>
     <changefreq>monthly</changefreq>
@@ -215,6 +364,8 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+
+  <!-- Service-in-Location Pages (Wroughton) -->
   <url>
     <loc>https://exampledrainheroes.co.uk/location/wroughton/blocked-drains</loc>
     <changefreq>monthly</changefreq>
