@@ -35,6 +35,18 @@ export function MapSection({ location }: MapSectionProps) {
           </div>
         </div>
 
+        {/* Map Legend */}
+        <div className="flex justify-center gap-6 mt-4">
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-red-500"></span>
+            <span className="text-sm text-muted-foreground">Current location</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+            <span className="text-sm text-muted-foreground">Other service areas</span>
+          </div>
+        </div>
+
         <p className="text-center text-sm text-muted-foreground mt-4">
           Serving {location.name} and {BRAND.serviceAreaLabel}
         </p>
