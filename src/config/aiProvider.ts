@@ -6,8 +6,9 @@ export type AIProvider =
   | "groq"
   | "lovable";
 
-// Default provider - Lovable AI is recommended as it requires no external API key
-export const AI_PROVIDER: AIProvider = "lovable";
+// Default provider - OpenAI is primary, Lovable AI is fallback
+export const AI_PROVIDER: AIProvider = "openai";
+export const AI_FALLBACK_PROVIDER: AIProvider = "lovable";
 
 // Model configuration per provider
 export const AI_MODELS = {
