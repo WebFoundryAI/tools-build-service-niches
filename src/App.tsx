@@ -20,6 +20,8 @@ import Sitemap from "./pages/Sitemap";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Cookies from "./pages/Cookies";
+import Login from "./pages/Login";
+import Admin from "./pages/Admin";
 import AdminContent from "./pages/AdminContent";
 import AdminBlogScheduler from "./pages/AdminBlogScheduler";
 import AdminRebrand from "./pages/AdminRebrand";
@@ -52,6 +54,8 @@ const App = () => (
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/cookies" element={<Cookies />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="/admin/content" element={<AdminContent />} />
           <Route path="/admin/blog-scheduler" element={<AdminBlogScheduler />} />
           <Route path="/admin/rebrand" element={<AdminRebrand />} />

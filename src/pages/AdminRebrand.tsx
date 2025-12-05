@@ -17,7 +17,7 @@ import {
   XCircle,
   AlertCircle
 } from "lucide-react";
-import { AdminLayout, ADMIN_TOKEN } from "@/components/admin/AdminLayout";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 import { BRAND, BrandConfig, OpeningHours, SocialLinks } from "@/config/brand";
 import { LOCATIONS, LocationConfig, PRIMARY_LOCATION } from "@/config/locations";
 import { SERVICES, ServiceConfig, SubServiceConfig } from "@/config/services";

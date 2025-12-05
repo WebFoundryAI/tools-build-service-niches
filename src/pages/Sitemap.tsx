@@ -1,14 +1,30 @@
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { BRAND } from "@/config/brand";
 import { SERVICES } from "@/config/services";
 import { LOCATIONS } from "@/config/locations";
 
-// This component generates a sitemap.xml and serves it
-// For React SPA, we'll generate a simple HTML sitemap page
-// The actual XML sitemap would need to be generated at build time or via server
+interface BlogPost {
+  slug: string;
+  title: string;
+}
 
 const Sitemap = () => {
   const baseUrl = `https://${BRAND.domain}`;
+
+  // Fetch blog posts dynamically
+  const { data: blogPosts } = useQuery({
+    queryKey: ["sitemap-blog-posts"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("blog_posts")
+        .select("slug, title")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as BlogPost[];
+    },
+  });
 
   const staticPages = [
     { url: "/", name: "Home", priority: "1.0" },
@@ -18,6 +34,9 @@ const Sitemap = () => {
     { url: "/contact", name: "Contact", priority: "0.8" },
     { url: "/faq", name: "FAQ", priority: "0.6" },
     { url: "/blog", name: "Blog", priority: "0.7" },
+    { url: "/privacy", name: "Privacy Policy", priority: "0.3" },
+    { url: "/terms", name: "Terms & Conditions", priority: "0.3" },
+    { url: "/cookies", name: "Cookie Policy", priority: "0.3" },
   ];
 
   const servicePages = SERVICES.map((service) => ({
@@ -25,6 +44,15 @@ const Sitemap = () => {
     name: service.name,
     priority: "0.8",
   }));
+
+  // Sub-service pages
+  const subServicePages = SERVICES.flatMap((service) =>
+    (service.subServices || []).map((sub) => ({
+      url: `/services/${service.slug}/${sub.slug}`,
+      name: `${sub.name} (${service.name})`,
+      priority: "0.7",
+    }))
+  );
 
   const locationPages = LOCATIONS.map((location) => ({
     url: `/location/${location.slug}`,
@@ -40,9 +68,35 @@ const Sitemap = () => {
     }))
   );
 
+  // Sub-service in location pages
+  const subServiceLocationPages = LOCATIONS.flatMap((location) =>
+    SERVICES.flatMap((service) =>
+      (service.subServices || []).map((sub) => ({
+        url: `/location/${location.slug}/${service.slug}/${sub.slug}`,
+        name: `${sub.name} in ${location.name}`,
+        priority: "0.6",
+      }))
+    )
+  );
+
+  const blogPages = (blogPosts || []).map((post) => ({
+    url: `/blog/${post.slug}`,
+    name: post.title,
+    priority: "0.6",
+  }));
+
   useEffect(() => {
     document.title = `Sitemap | ${BRAND.brandName}`;
   }, []);
+
+  const totalPages = 
+    staticPages.length + 
+    servicePages.length + 
+    subServicePages.length +
+    locationPages.length + 
+    serviceLocationPages.length + 
+    subServiceLocationPages.length +
+    blogPages.length;
 
   return (
     <div className="min-h-screen bg-background py-16">
@@ -66,7 +120,7 @@ const Sitemap = () => {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Services</h2>
+          <h2 className="text-xl font-semibold mb-4">Services ({servicePages.length})</h2>
           <ul className="space-y-2">
             {servicePages.map((page) => (
               <li key={page.url}>
@@ -79,10 +133,27 @@ const Sitemap = () => {
               </li>
             ))}
           </ul>
+          {subServicePages.length > 0 && (
+            <div className="mt-4 ml-4">
+              <h3 className="text-lg font-medium mb-2">Sub-Services ({subServicePages.length})</h3>
+              <ul className="space-y-1 text-sm">
+                {subServicePages.map((page) => (
+                  <li key={page.url}>
+                    <a
+                      href={page.url}
+                      className="text-primary hover:underline"
+                    >
+                      {page.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Areas We Cover</h2>
+          <h2 className="text-xl font-semibold mb-4">Areas We Cover ({locationPages.length})</h2>
           <ul className="space-y-2">
             {locationPages.map((page) => (
               <li key={page.url}>
@@ -98,7 +169,7 @@ const Sitemap = () => {
         </section>
 
         <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Local Services</h2>
+          <h2 className="text-xl font-semibold mb-4">Local Services ({serviceLocationPages.length})</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {LOCATIONS.map((location) => (
               <div key={location.slug}>
@@ -120,10 +191,26 @@ const Sitemap = () => {
           </div>
         </section>
 
+        {blogPages.length > 0 && (
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold mb-4">Blog Posts ({blogPages.length})</h2>
+            <ul className="space-y-2">
+              {blogPages.map((page) => (
+                <li key={page.url}>
+                  <a
+                    href={page.url}
+                    className="text-primary hover:underline"
+                  >
+                    {page.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         <div className="text-sm text-muted-foreground mt-8 pt-8 border-t">
-          <p>
-            Total pages: {staticPages.length + servicePages.length + locationPages.length + serviceLocationPages.length}
-          </p>
+          <p>Total pages: {totalPages}</p>
         </div>
       </div>
     </div>

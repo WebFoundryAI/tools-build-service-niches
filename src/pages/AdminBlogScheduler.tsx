@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { RefreshCw, Lightbulb, Plus } from "lucide-react";
 import { BRAND } from "@/config/brand";
 import { LOCATIONS } from "@/config/locations";
+import { AI_PROVIDER } from "@/config/aiProvider";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 
 const TOPIC_CATEGORIES = [
@@ -86,7 +87,7 @@ Format the response as follows:
 TITLE: [A compelling, SEO-friendly title]
 EXCERPT: [A one-sentence summary for preview]
 CONTENT: [The full blog post content with proper paragraphs]`,
-          provider: "lovable",
+          provider: AI_PROVIDER,
         },
       });
 
