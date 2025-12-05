@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { RefreshCw, Trash2, Plus } from "lucide-react";
 import { BRAND } from "@/config/brand";
+import { AI_PROVIDER } from "@/config/aiProvider";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 
 interface AIContent {
@@ -119,7 +120,7 @@ Format the response as follows:
 TITLE: [A compelling title]
 EXCERPT: [A one-sentence summary]
 CONTENT: [The full blog post content]`,
-          provider: "lovable",
+          provider: AI_PROVIDER,
         },
       });
 
