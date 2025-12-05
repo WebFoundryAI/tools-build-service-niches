@@ -1,4 +1,4 @@
-import { LocationConfig, PRIMARY_LOCATION } from "@/config/locations";
+import { LocationConfig, PRIMARY_LOCATION, LOCATIONS } from "@/config/locations";
 import { MAP_CONFIG } from "@/config/maps";
 
 export function buildStaticMapUrl(location: LocationConfig): string {
@@ -10,10 +10,15 @@ export function buildStaticMapUrl(location: LocationConfig): string {
     if (apiKey) {
       const centerLat = PRIMARY_LOCATION.latitude;
       const centerLng = PRIMARY_LOCATION.longitude;
-      const markerLat = location.latitude;
-      const markerLng = location.longitude;
+      
+      // Build markers for all locations
+      // Current location gets a red marker, others get blue
+      const markers = LOCATIONS.map((loc) => {
+        const color = loc.slug === location.slug ? "red" : "blue";
+        return `markers=color:${color}%7Clabel:${loc.name.charAt(0)}%7C${loc.latitude},${loc.longitude}`;
+      }).join("&");
 
-      return `https://maps.googleapis.com/maps/api/staticmap?center=${centerLat},${centerLng}&zoom=${defaultZoom}&size=${width}x${height}&markers=color:red%7C${markerLat},${markerLng}&key=${apiKey}`;
+      return `https://maps.googleapis.com/maps/api/staticmap?center=${centerLat},${centerLng}&zoom=${defaultZoom}&size=${width}x${height}&${markers}&key=${apiKey}`;
     }
   }
 
