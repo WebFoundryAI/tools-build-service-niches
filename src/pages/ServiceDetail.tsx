@@ -3,9 +3,19 @@ import { Layout } from "@/components/layout/Layout";
 import { LeadForm } from "@/components/forms/LeadForm";
 import { CTASection } from "@/components/sections/CTASection";
 import { AIContentBlock } from "@/components/ai/AIContentBlock";
+import { SchemaScript } from "@/components/seo/SchemaScript";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { Breadcrumbs } from "@/components/nav/Breadcrumbs";
 import { getServiceBySlug, SERVICES } from "@/config/services";
+import { LOCATIONS, PRIMARY_LOCATION } from "@/config/locations";
 import { BRAND } from "@/config/brand";
-import { CheckCircle2, ArrowLeft } from "lucide-react";
+import { getServiceSEO } from "@/config/seo";
+import {
+  generateServiceSchema,
+  generateLocalBusinessSchema,
+  generateBreadcrumbSchema,
+} from "@/lib/schema";
+import { CheckCircle2, ArrowLeft, MapPin } from "lucide-react";
 
 const ServiceDetail = () => {
   const { serviceSlug } = useParams<{ serviceSlug: string }>();
@@ -25,8 +35,12 @@ const ServiceDetail = () => {
   }
 
   const otherServices = SERVICES.filter((s) => s.slug !== service.slug).slice(0, 3);
+  const topLocations = LOCATIONS.slice(0, 4);
+  const breadcrumbItems = [
+    { label: "Services", href: "/services" },
+    { label: service.name },
+  ];
 
-  // Variables for AI content generation
   const aiVariables = {
     serviceName: service.name,
     brandName: BRAND.brandName,
@@ -35,6 +49,19 @@ const ServiceDetail = () => {
 
   return (
     <Layout>
+      <SEOHead metadata={getServiceSEO(service)} />
+      <SchemaScript
+        schema={[
+          generateServiceSchema(service),
+          generateLocalBusinessSchema(),
+          generateBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Services", url: "/services" },
+            { name: service.name, url: `/services/${service.slug}` },
+          ]),
+        ]}
+      />
+
       <section className="hero-section">
         <div className="hero-overlay py-16 md:py-20">
           <div className="container-wide px-4">
@@ -49,7 +76,8 @@ const ServiceDetail = () => {
               <span className="text-5xl mb-4 block">{service.icon}</span>
               <h1 className="text-4xl md:text-5xl font-bold mb-4">{service.name}</h1>
               <p className="text-lg text-primary-foreground/80 max-w-2xl">
-                Professional {service.name.toLowerCase()} services across {BRAND.serviceAreaLabel}. Fast response, no call-out fee.
+                Professional {service.name.toLowerCase()} services across{" "}
+                {BRAND.serviceAreaLabel}. Fast response, no call-out fee.
               </p>
             </div>
           </div>
@@ -58,11 +86,12 @@ const ServiceDetail = () => {
 
       <section className="section-padding">
         <div className="container-wide px-4">
+          <Breadcrumbs items={breadcrumbItems} />
+
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2">
               <h2 className="text-2xl font-bold mb-6">About {service.name}</h2>
-              
-              {/* AI-Generated Content */}
+
               <AIContentBlock
                 type="service"
                 templateName="genericService"
@@ -74,7 +103,7 @@ const ServiceDetail = () => {
               />
 
               <h3 className="text-xl font-bold mt-10 mb-4">Why Choose Us?</h3>
-              <ul className="space-y-3">
+              <ul className="space-y-3 mb-8">
                 {[
                   "No call-out charges",
                   "Fixed pricing with no hidden fees",
@@ -90,7 +119,26 @@ const ServiceDetail = () => {
                 ))}
               </ul>
 
-              <h3 className="text-xl font-bold mt-8 mb-4">Other Services</h3>
+              {/* This service in key locations */}
+              <h3 className="text-xl font-bold mt-8 mb-4">
+                {service.name} in Your Area
+              </h3>
+              <div className="grid sm:grid-cols-2 gap-3 mb-8">
+                {topLocations.map((loc) => (
+                  <Link
+                    key={loc.slug}
+                    to={`/location/${loc.slug}/${service.slug}`}
+                    className="flex items-center gap-2 p-3 bg-muted rounded-lg hover:bg-muted/70 transition-colors"
+                  >
+                    <MapPin className="h-4 w-4 text-primary" />
+                    <span className="font-medium">
+                      {service.name} in {loc.name}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+
+              <h3 className="text-xl font-bold mb-4">Other Services</h3>
               <div className="grid sm:grid-cols-3 gap-4">
                 {otherServices.map((s) => (
                   <Link
@@ -103,12 +151,36 @@ const ServiceDetail = () => {
                   </Link>
                 ))}
               </div>
+
+              {/* Internal links */}
+              <div className="mt-8 pt-6 border-t border-border">
+                <p className="text-sm text-muted-foreground">
+                  <Link to="/" className="text-primary hover:underline">
+                    Home
+                  </Link>
+                  {" · "}
+                  <Link to="/services" className="text-primary hover:underline">
+                    All Services
+                  </Link>
+                  {" · "}
+                  <Link to="/locations" className="text-primary hover:underline">
+                    All Areas
+                  </Link>
+                  {" · "}
+                  <Link to="/contact" className="text-primary hover:underline">
+                    Contact Us
+                  </Link>
+                </p>
+              </div>
             </div>
 
             <div>
               <div className="bg-card p-6 rounded-xl card-elevated sticky top-24">
                 <h3 className="text-xl font-bold mb-4">Get a Quote</h3>
-                <LeadForm sourcePage={`service-${service.slug}`} defaultService={service.slug} />
+                <LeadForm
+                  sourcePage={`service-${service.slug}`}
+                  defaultService={service.slug}
+                />
               </div>
             </div>
           </div>

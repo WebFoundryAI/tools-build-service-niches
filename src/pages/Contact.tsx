@@ -1,11 +1,14 @@
 import { Layout } from "@/components/layout/Layout";
 import { LeadForm } from "@/components/forms/LeadForm";
+import { SEOHead } from "@/components/seo/SEOHead";
 import { BRAND } from "@/config/brand";
+import { getContactSEO } from "@/config/seo";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 
 const Contact = () => {
   return (
     <Layout>
+      <SEOHead metadata={getContactSEO()} />
       <section className="hero-section">
         <div className="hero-overlay py-16 md:py-20">
           <div className="container-wide px-4 text-center text-primary-foreground">
