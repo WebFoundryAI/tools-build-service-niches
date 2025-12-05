@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { LeadForm } from "@/components/forms/LeadForm";
 import { CTASection } from "@/components/sections/CTASection";
+import { AIContentBlock } from "@/components/ai/AIContentBlock";
 import { getServiceBySlug, SERVICES } from "@/config/services";
 import { BRAND } from "@/config/brand";
 import { CheckCircle2, ArrowLeft } from "lucide-react";
@@ -24,6 +25,13 @@ const ServiceDetail = () => {
   }
 
   const otherServices = SERVICES.filter((s) => s.slug !== service.slug).slice(0, 3);
+
+  // Variables for AI content generation
+  const aiVariables = {
+    serviceName: service.name,
+    brandName: BRAND.brandName,
+    primaryLocationName: BRAND.primaryLocation,
+  };
 
   return (
     <Layout>
@@ -52,10 +60,20 @@ const ServiceDetail = () => {
         <div className="container-wide px-4">
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2">
-              <h2 className="text-2xl font-bold mb-4">About This Service</h2>
-              <p className="text-muted-foreground mb-6">{service.description}</p>
+              <h2 className="text-2xl font-bold mb-6">About {service.name}</h2>
+              
+              {/* AI-Generated Content */}
+              <AIContentBlock
+                type="service"
+                templateName="genericService"
+                variables={aiVariables}
+                keyParts={[service.slug]}
+                fallback={
+                  <p className="text-muted-foreground mb-6">{service.description}</p>
+                }
+              />
 
-              <h3 className="text-xl font-bold mb-4">Why Choose Us?</h3>
+              <h3 className="text-xl font-bold mt-10 mb-4">Why Choose Us?</h3>
               <ul className="space-y-3">
                 {[
                   "No call-out charges",
