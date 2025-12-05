@@ -15,6 +15,7 @@ import FAQ from "./pages/FAQ";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Sitemap from "./pages/Sitemap";
+import AdminContent from "./pages/AdminContent";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/sitemap" element={<Sitemap />} />
+          <Route path="/admin/content" element={<AdminContent />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
