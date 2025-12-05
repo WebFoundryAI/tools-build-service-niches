@@ -18,6 +18,7 @@ interface BlogPostData {
   excerpt: string;
   content: string;
   created_at: string;
+  indexable: boolean | null;
 }
 
 const BlogPost = () => {
@@ -93,6 +94,9 @@ const BlogPost = () => {
       .join("");
   };
 
+  // Determine if page should be indexed
+  const shouldIndex = post.indexable === true;
+
   return (
     <Layout>
       <SEOHead
@@ -100,6 +104,7 @@ const BlogPost = () => {
           title: `${post.title} | ${BRAND.brandName} Blog`,
           description: post.excerpt,
           canonicalUrl: `/blog/${post.slug}`,
+          noIndex: !shouldIndex,
         }}
       />
       <SchemaScript

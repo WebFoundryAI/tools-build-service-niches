@@ -18,23 +18,38 @@ export type Database = {
         Row: {
           content: string
           created_at: string
+          how_created: string | null
+          human_reviewed: boolean | null
           id: string
           key: string
+          reviewed_at: string | null
+          reviewed_by: string | null
           updated_at: string
+          why_created: string | null
         }
         Insert: {
           content: string
           created_at?: string
+          how_created?: string | null
+          human_reviewed?: boolean | null
           id?: string
           key: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           updated_at?: string
+          why_created?: string | null
         }
         Update: {
           content?: string
           created_at?: string
+          how_created?: string | null
+          human_reviewed?: boolean | null
           id?: string
           key?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           updated_at?: string
+          why_created?: string | null
         }
         Relationships: []
       }
@@ -43,28 +58,46 @@ export type Database = {
           content: string
           created_at: string
           excerpt: string
+          how_created: string | null
+          human_reviewed: boolean | null
           id: string
+          indexable: boolean | null
+          reviewed_at: string | null
+          reviewed_by: string | null
           slug: string
           title: string
           updated_at: string
+          why_created: string | null
         }
         Insert: {
           content: string
           created_at?: string
           excerpt: string
+          how_created?: string | null
+          human_reviewed?: boolean | null
           id?: string
+          indexable?: boolean | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           slug: string
           title: string
           updated_at?: string
+          why_created?: string | null
         }
         Update: {
           content?: string
           created_at?: string
           excerpt?: string
+          how_created?: string | null
+          human_reviewed?: boolean | null
           id?: string
+          indexable?: boolean | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           slug?: string
           title?: string
           updated_at?: string
+          why_created?: string | null
         }
         Relationships: []
       }
