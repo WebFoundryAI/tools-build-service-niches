@@ -14,7 +14,15 @@ import { AI_PROVIDER } from "@/config/aiProvider";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AIContentPolicyPanel } from "@/components/admin/AIContentPolicyPanel";
 import { QualityChecklistModal } from "@/components/admin/QualityChecklistModal";
+import { QualityDashboard } from "@/components/admin/QualityDashboard";
+import { QualityStatusBadge } from "@/components/admin/QualityStatusBadge";
 import { useAuth } from "@/hooks/useAuth";
+import {
+  calculateQualityScore,
+  getPageTypeFromKey,
+  getLocationFromKey,
+  getIndexingRecommendation,
+} from "@/lib/qualityScoring";
 
 interface AIContent {
   id: string;
@@ -250,9 +258,41 @@ CONTENT: [The full blog post content]`,
   const unreviewedCount = (blogPosts?.filter((p) => !p.human_reviewed).length || 0) +
     (aiContent?.filter((c) => !c.human_reviewed).length || 0);
 
+  // Prepare content for quality scoring
+  const allAIContents = aiContent?.map((c) => c.content) || [];
+  const allBlogContents = blogPosts?.map((p) => p.content) || [];
+
+  // Get quality score for a blog post
+  const getBlogQualityScore = (post: BlogPost) => {
+    return calculateQualityScore(post.content, "blog", {
+      humanReviewed: post.human_reviewed,
+      allContents: allBlogContents,
+    });
+  };
+
+  // Get quality score for AI content
+  const getAIContentQualityScore = (item: AIContent) => {
+    const pageType = getPageTypeFromKey(item.key);
+    if (!pageType) return null;
+    const locationName = getLocationFromKey(item.key);
+    return calculateQualityScore(item.content, pageType, {
+      humanReviewed: item.human_reviewed,
+      locationName,
+      allContents: allAIContents,
+    });
+  };
+
   return (
     <AdminLayout title="Content Manager" description="Manage AI content cache and blog posts">
       <AIContentPolicyPanel />
+
+      {/* Quality Dashboard */}
+      {(aiContent || blogPosts) && (
+        <QualityDashboard
+          aiContent={aiContent?.map((c) => ({ key: c.key, content: c.content, human_reviewed: c.human_reviewed })) || []}
+          blogPosts={blogPosts?.map((p) => ({ content: p.content, human_reviewed: p.human_reviewed, indexable: p.indexable })) || []}
+        />
+      )}
 
       {unreviewedCount > 0 && (
         <div className="mb-6 p-4 bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 rounded-lg flex items-center gap-3">
@@ -302,30 +342,25 @@ CONTENT: [The full blog post content]`,
         ) : blogPosts && blogPosts.length > 0 ? (
           <div className="space-y-3">
             {blogPosts.map((post) => {
-              const thin = isThinContent(post.content);
-              const needsAttention = !post.human_reviewed || thin;
+              const qualityScore = getBlogQualityScore(post);
+              const indexRec = getIndexingRecommendation(qualityScore.status, post.indexable || false);
               
               return (
                 <div
                   key={post.id}
                   className={`p-4 bg-card rounded-lg border ${
-                    needsAttention ? "border-amber-300 dark:border-amber-700" : "border-border"
+                    qualityScore.status === "red"
+                      ? "border-red-300 dark:border-red-700"
+                      : qualityScore.status === "amber"
+                      ? "border-amber-300 dark:border-amber-700"
+                      : "border-border"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
                         <p className="font-medium">{post.title}</p>
-                        {!post.human_reviewed && (
-                          <Badge variant="outline" className="text-amber-600 border-amber-600">
-                            Needs Review
-                          </Badge>
-                        )}
-                        {thin && (
-                          <Badge variant="outline" className="text-red-600 border-red-600">
-                            Thin Content
-                          </Badge>
-                        )}
+                        <QualityStatusBadge qualityScore={qualityScore} />
                         {post.indexable ? (
                           <Badge className="bg-green-600">
                             <Eye className="h-3 w-3 mr-1" />
@@ -338,6 +373,11 @@ CONTENT: [The full blog post content]`,
                           </Badge>
                         )}
                       </div>
+                      {indexRec.warning && (
+                        <p className="text-xs text-amber-600 dark:text-amber-400 mb-1">
+                          {indexRec.warning}
+                        </p>
+                      )}
                       <p className="text-sm text-muted-foreground truncate">{post.excerpt}</p>
                       <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
                         <span>{new Date(post.created_at).toLocaleDateString("en-GB")}</span>
@@ -400,30 +440,24 @@ CONTENT: [The full blog post content]`,
         ) : aiContent && aiContent.length > 0 ? (
           <div className="space-y-2">
             {aiContent.map((item) => {
-              const thin = isThinContent(item.content);
-              const needsAttention = !item.human_reviewed || thin;
+              const qualityScore = getAIContentQualityScore(item);
 
               return (
                 <div
                   key={item.id}
                   className={`p-4 bg-card rounded-lg border ${
-                    needsAttention ? "border-amber-300 dark:border-amber-700" : "border-border"
+                    qualityScore?.status === "red"
+                      ? "border-red-300 dark:border-red-700"
+                      : qualityScore?.status === "amber"
+                      ? "border-amber-300 dark:border-amber-700"
+                      : "border-border"
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="font-mono text-sm truncate">{item.key}</p>
-                        {!item.human_reviewed && (
-                          <Badge variant="outline" className="text-amber-600 border-amber-600">
-                            Needs Review
-                          </Badge>
-                        )}
-                        {thin && (
-                          <Badge variant="outline" className="text-red-600 border-red-600">
-                            Thin
-                          </Badge>
-                        )}
+                        {qualityScore && <QualityStatusBadge qualityScore={qualityScore} />}
                       </div>
                       <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
                         <span>Updated: {new Date(item.updated_at).toLocaleString("en-GB")}</span>
