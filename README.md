@@ -27,18 +27,36 @@ This template is **not multi-tenant**. It is designed for a single brand deploym
 - **AI-generated, cached content** - Unique content for every service and location page
 - **Multi-location system** - Support for multiple service areas with individual pages
 - **Service-in-location pages** - Core SEO pages (e.g., "Blocked Drains in Swindon")
+- **Sub-service pages** - Granular service pages (e.g., "Blocked Toilet in Swindon")
 - **Static Google-style maps** - Location maps with coverage areas
 - **Lead capture forms** - Integrated with Lovable Cloud database
 - **Blog system** - Dynamic blog with AI post generation
 - **Full JSON-LD schema** - Structured data for rich search results
-- **Automatic sitemap** - XML sitemap generation
+- **Automatic sitemap** - XML sitemap with all pages including sub-services
 - **SEO metadata utilities** - Title and description helpers
 
 ### 🛠️ Admin Features
 
 - **Content regeneration panel** - Manage AI-generated content cache
 - **Blog post generator** - AI-assisted blog creation
+- **Blog scheduler** - Plan and generate blog posts with topic categories
 - **Lead management** - View submitted leads in the database
+
+### 🚀 Performance & UX Features
+
+- **Trust badges** - Configurable trust indicators (24/7, insured, local experts)
+- **Guarantees section** - Configurable service guarantees
+- **Mobile call bar** - Sticky "Tap to Call" CTA on mobile devices
+- **Cookie consent banner** - GDPR-compliant cookie notice
+- **Coverage statements** - Dynamic area coverage blocks on location pages
+- **Popular links footer** - Auto-generated internal linking section
+
+### 📋 Legal & Compliance
+
+- **Privacy Policy page** - Boilerplate privacy policy
+- **Terms of Service page** - Boilerplate terms
+- **Cookie Policy page** - Cookie usage explanation
+- **GDPR cookie banner** - User consent collection
 
 ---
 
@@ -63,7 +81,23 @@ export const BRAND: BrandConfig = {
   primaryColour: "#005BBB",
   secondaryColour: "#FFD500",
   accentColour: "#111827",
-  logoUrl: "/logo.png", // Optional
+  logoUrl: "/logo.png",
+  tagline: "Fast, Reliable Drainage Solutions",
+  emergencyAvailable: true,
+  showMobileCallBar: true,
+  socialLinks: {
+    facebook: "https://facebook.com/yourcompany",
+    twitter: "",
+    instagram: "",
+    linkedin: "",
+    youtube: "",
+  },
+  openingHours: {
+    weekdays: "8:00 AM - 6:00 PM",
+    saturday: "9:00 AM - 4:00 PM",
+    sunday: "Emergency only",
+    emergencyNote: "24/7 Emergency Callouts Available",
+  },
 };
 ```
 
@@ -90,7 +124,7 @@ export const LOCATIONS: LocationConfig[] = [
 
 ### 3. Edit `/src/config/services.ts`
 
-Customise the services offered:
+Customise the services offered, including sub-services:
 
 ```typescript
 export const SERVICES: ServiceConfig[] = [
@@ -100,6 +134,21 @@ export const SERVICES: ServiceConfig[] = [
     shortLabel: "Blocked drains cleared fast",
     description: "Professional drain unblocking...",
     icon: "🚿",
+    subServices: [
+      {
+        slug: "blocked-toilet",
+        name: "Blocked Toilet",
+        shortLabel: "Toilet unblocking",
+        description: "Fast toilet unblocking service.",
+      },
+      // Add more sub-services
+    ],
+    semanticTags: {
+      problemType: ["blockage", "slow drainage"],
+      serviceType: ["emergency", "repair"],
+      propertyType: ["residential", "commercial"],
+      riskFactors: ["flooding", "water damage"],
+    },
   },
   // Add or modify services
 ];
@@ -117,6 +166,23 @@ export const MAP_CONFIG: MapConfig = {
   width: 800,
   height: 450,
 };
+```
+
+### 5. Edit `/src/config/trust.ts`
+
+Customise trust badges and guarantees:
+
+```typescript
+export const TRUST_BADGES: TrustBadge[] = [
+  { icon: "clock", label: "24/7 Emergency", description: "Round-the-clock availability" },
+  { icon: "shield", label: "Fully Insured", description: "Complete peace of mind" },
+  // Add more badges
+];
+
+export const GUARANTEES: Guarantee[] = [
+  { title: "No Call-Out Charge", description: "You only pay for work completed." },
+  // Add more guarantees
+];
 ```
 
 ---
@@ -169,6 +235,8 @@ Templates are defined in `/src/config/aiPrompts.ts`:
 - `genericService` - Individual service pages
 - `locationPage` - Location-specific pages
 - `serviceInLocation` - Service + location combo pages
+- `subService` - Sub-service pages
+- `subServiceInLocation` - Sub-service + location combo pages
 - `aboutPage` - About page content
 - `faqPage` - FAQ content
 - `blogPost` - Blog article generation
@@ -177,7 +245,7 @@ Templates are defined in `/src/config/aiPrompts.ts`:
 
 ## Admin Panel
 
-### Accessing the Admin Panel
+### Content Manager
 
 Navigate to:
 
@@ -185,22 +253,32 @@ Navigate to:
 /admin/content?token=drain-admin-2024
 ```
 
-### Changing the Admin Token
+#### Features:
 
-Edit the `ADMIN_TOKEN` constant in `/src/pages/AdminContent.tsx`:
+- **View AI Content Cache** - See all cached content entries
+- **Delete Cache Entries** - Force regeneration on next visit
+- **Generate Blog Posts** - AI-assisted blog creation
+- **Manage Blog Posts** - View and delete blog posts
 
-```typescript
-const ADMIN_TOKEN = "your-secure-token";
+### Blog Scheduler
+
+Navigate to:
+
+```
+/admin/blog-scheduler?token=drain-admin-2024
 ```
 
-For production, consider using an environment variable.
+#### Features:
 
-### Admin Features
+- **Select topic category** - Choose from drainage, maintenance, seasonal topics
+- **Set word count** - Short (300), medium (500), or long (800) posts
+- **Target location** - Optionally focus on a specific service area
+- **AI topic suggestions** - Get AI-generated blog topic ideas
+- **One-click generation** - Generate full blog posts instantly
 
-1. **View AI Content Cache** - See all cached content entries
-2. **Delete Cache Entries** - Force regeneration on next visit
-3. **Generate Blog Posts** - AI-assisted blog creation
-4. **Manage Blog Posts** - View and delete blog posts
+### Changing the Admin Token
+
+Edit the `ADMIN_TOKEN` constant in the admin page files, or use an environment variable for production.
 
 ---
 
@@ -233,6 +311,39 @@ Stores blog articles:
 
 ---
 
+## URL Structure
+
+### Core Pages
+
+- `/` - Homepage
+- `/services` - Services overview
+- `/locations` - Locations overview
+- `/about` - About page
+- `/contact` - Contact page
+- `/faq` - FAQ page
+- `/blog` - Blog listing
+- `/privacy` - Privacy policy
+- `/terms` - Terms of service
+- `/cookies` - Cookie policy
+- `/sitemap` - HTML sitemap
+
+### Service Pages
+
+- `/services/[serviceSlug]` - Service detail page
+- `/services/[serviceSlug]/[subServiceSlug]` - Sub-service detail page
+
+### Location Pages
+
+- `/location/[locationSlug]` - Location detail page
+- `/location/[locationSlug]/[serviceSlug]` - Service in location page
+- `/location/[locationSlug]/[serviceSlug]/[subServiceSlug]` - Sub-service in location page
+
+### Blog Pages
+
+- `/blog/[slug]` - Individual blog post
+
+---
+
 ## Deployment
 
 ### Using Lovable
@@ -260,10 +371,10 @@ src/
 │   ├── forms/           # Lead capture forms
 │   ├── hero/            # Hero sections
 │   ├── layout/          # Header, Footer, Layout
-│   ├── nav/             # Navigation components
-│   ├── sections/        # Page sections
+│   ├── nav/             # Navigation, Breadcrumbs
+│   ├── sections/        # Page sections (Trust, Guarantees, etc.)
 │   ├── seo/             # Schema and SEO components
-│   └── ui/              # UI primitives (shadcn)
+│   └── ui/              # UI primitives (shadcn, CookieBanner, etc.)
 ├── config/
 │   ├── aiPrompts.ts     # AI content templates
 │   ├── aiProvider.ts    # AI provider configuration
@@ -271,9 +382,10 @@ src/
 │   ├── locations.ts     # Service areas
 │   ├── maps.ts          # Map settings
 │   ├── seo.ts           # SEO metadata helpers
-│   └── services.ts      # Services offered
+│   ├── services.ts      # Services and sub-services
+│   └── trust.ts         # Trust badges and guarantees
 ├── hooks/               # React hooks
-├── lib/                 # Utility functions
+├── lib/                 # Utility functions (schema, maps, etc.)
 ├── pages/               # Page components
 └── integrations/        # Supabase client
 ```
@@ -284,11 +396,26 @@ src/
 
 - **Dynamic meta titles and descriptions** per page
 - **JSON-LD schema** for LocalBusiness, Service, Place, FAQ, BlogPosting
+- **Opening hours schema** - Parsed from brand config
+- **Social links (sameAs)** - Included in LocalBusiness schema
 - **Breadcrumb schema** for navigation
-- **XML sitemap** at `/sitemap.xml`
+- **XML sitemap** at `/sitemap.xml` (includes all sub-services)
+- **HTML sitemap** at `/sitemap`
 - **Robots.txt** allowing all crawlers
 - **Internal linking** throughout all pages
 - **Semantic HTML** structure
+- **Semantic tags** for AI search engines (hidden metadata)
+
+---
+
+## Mobile & UX Features
+
+- **Responsive design** - Mobile-first approach
+- **Mobile call bar** - Sticky CTA for easy calling
+- **Cookie consent** - GDPR-compliant banner
+- **Trust indicators** - Visible trust badges
+- **Service guarantees** - Clear value propositions
+- **Coverage statements** - Location-specific area lists
 
 ---
 

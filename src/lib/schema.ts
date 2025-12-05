@@ -23,10 +23,96 @@ export function generateWebsiteSchema(): SchemaOrgObject {
   };
 }
 
+// Parse time string like "8:00 AM" to "08:00"
+function parseTimeToISO(timeStr: string): string {
+  const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+  if (!match) return "00:00";
+  
+  let hours = parseInt(match[1], 10);
+  const minutes = match[2];
+  const period = match[3]?.toUpperCase();
+  
+  if (period === "PM" && hours !== 12) hours += 12;
+  if (period === "AM" && hours === 12) hours = 0;
+  
+  return `${hours.toString().padStart(2, "0")}:${minutes}`;
+}
+
+// Parse opening hours range like "8:00 AM - 6:00 PM" to { opens, closes }
+function parseHoursRange(hoursStr: string): { opens: string; closes: string } | null {
+  if (hoursStr.toLowerCase().includes("emergency") || hoursStr.toLowerCase().includes("closed")) {
+    return null;
+  }
+  
+  const parts = hoursStr.split("-").map((s) => s.trim());
+  if (parts.length !== 2) return null;
+  
+  return {
+    opens: parseTimeToISO(parts[0]),
+    closes: parseTimeToISO(parts[1]),
+  };
+}
+
 export function generateLocalBusinessSchema(
   location?: LocationConfig
 ): SchemaOrgObject {
   const loc = location || PRIMARY_LOCATION;
+  
+  // Build opening hours specification from BRAND config
+  const openingHoursSpecification: Array<{
+    "@type": string;
+    dayOfWeek: string | string[];
+    opens: string;
+    closes: string;
+  }> = [];
+  
+  const weekdayHours = parseHoursRange(BRAND.openingHours.weekdays);
+  if (weekdayHours) {
+    openingHoursSpecification.push({
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: weekdayHours.opens,
+      closes: weekdayHours.closes,
+    });
+  }
+  
+  const saturdayHours = parseHoursRange(BRAND.openingHours.saturday);
+  if (saturdayHours) {
+    openingHoursSpecification.push({
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: "Saturday",
+      opens: saturdayHours.opens,
+      closes: saturdayHours.closes,
+    });
+  }
+  
+  const sundayHours = parseHoursRange(BRAND.openingHours.sunday);
+  if (sundayHours) {
+    openingHoursSpecification.push({
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: "Sunday",
+      opens: sundayHours.opens,
+      closes: sundayHours.closes,
+    });
+  }
+  
+  // If 24/7 emergency, add that
+  if (BRAND.emergencyAvailable) {
+    openingHoursSpecification.push({
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      opens: "00:00",
+      closes: "23:59",
+    });
+  }
+  
+  // Build sameAs links from social profiles
+  const sameAs: string[] = [];
+  if (BRAND.socialLinks.facebook) sameAs.push(BRAND.socialLinks.facebook);
+  if (BRAND.socialLinks.twitter) sameAs.push(BRAND.socialLinks.twitter);
+  if (BRAND.socialLinks.instagram) sameAs.push(BRAND.socialLinks.instagram);
+  if (BRAND.socialLinks.linkedin) sameAs.push(BRAND.socialLinks.linkedin);
+  if (BRAND.socialLinks.youtube) sameAs.push(BRAND.socialLinks.youtube);
 
   return {
     "@context": "https://schema.org",
@@ -54,21 +140,16 @@ export function generateLocalBusinessSchema(
       "@type": "Place",
       name: BRAND.serviceAreaLabel,
     },
-    openingHoursSpecification: {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-      ],
-      opens: "00:00",
-      closes: "23:59",
-    },
+    openingHoursSpecification: openingHoursSpecification.length > 0 
+      ? openingHoursSpecification 
+      : {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          opens: "00:00",
+          closes: "23:59",
+        },
     priceRange: "££",
+    ...(sameAs.length > 0 && { sameAs }),
   };
 }
 
