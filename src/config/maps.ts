@@ -9,7 +9,7 @@ export type MapConfig = {
 };
 
 export const MAP_CONFIG: MapConfig = {
-  provider: "placeholder",
+  provider: "google-static",
   apiKeyEnvVar: "GOOGLE_STATIC_MAPS_API_KEY",
   defaultZoom: 11,
   width: 800,
