@@ -4,10 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { RefreshCw, Trash2, Plus, ArrowLeft } from "lucide-react";
+import { RefreshCw, Trash2, Plus } from "lucide-react";
 import { BRAND } from "@/config/brand";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 
 interface AIContent {
   id: string;
@@ -25,31 +25,10 @@ interface BlogPost {
   created_at: string;
 }
 
-const ADMIN_TOKEN = "drain-admin-2024"; // Simple token for demo
-
 const AdminContent = () => {
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get("token");
   const queryClient = useQueryClient();
   const [blogTopic, setBlogTopic] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-
-  // Check authorization
-  if (token !== ADMIN_TOKEN) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Unauthorised</h1>
-          <p className="text-muted-foreground mb-4">
-            Access denied. Please provide a valid admin token.
-          </p>
-          <Link to="/" className="text-primary hover:underline">
-            Return home
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   // Fetch AI content
   const { data: aiContent, isLoading: loadingAI } = useQuery({
@@ -186,23 +165,9 @@ CONTENT: [The full blog post content]`,
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container-wide px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to site
-            </Link>
-            <h1 className="text-3xl font-bold">Admin: Content Manager</h1>
-          </div>
-        </div>
-
-        {/* Blog Post Generator */}
-        <section className="mb-12 bg-card p-6 rounded-xl">
+    <AdminLayout title="Content Manager" description="Manage AI content cache and blog posts">
+      {/* Blog Post Generator */}
+      <section className="mb-12 bg-card p-6 rounded-xl">
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
             <Plus className="h-5 w-5" />
             Generate Blog Post
@@ -310,8 +275,7 @@ CONTENT: [The full blog post content]`,
             <p className="text-muted-foreground">No cached content yet.</p>
           )}
         </section>
-      </div>
-    </div>
+    </AdminLayout>
   );
 };
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,11 +12,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { RefreshCw, ArrowLeft, Lightbulb, Plus } from "lucide-react";
+import { RefreshCw, Lightbulb, Plus } from "lucide-react";
 import { BRAND } from "@/config/brand";
 import { LOCATIONS } from "@/config/locations";
-
-const ADMIN_TOKEN = "drain-admin-2024";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 
 const TOPIC_CATEGORIES = [
   { value: "blocked-drains", label: "Blocked Drains" },
@@ -41,8 +40,6 @@ const SUGGESTED_TOPICS = [
 ];
 
 const AdminBlogScheduler = () => {
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get("token");
   const queryClient = useQueryClient();
   
   const [selectedTopic, setSelectedTopic] = useState("");
@@ -51,22 +48,6 @@ const AdminBlogScheduler = () => {
   const [targetLocation, setTargetLocation] = useState("");
   const [wordCount, setWordCount] = useState("medium");
   const [isGenerating, setIsGenerating] = useState(false);
-
-  if (token !== ADMIN_TOKEN) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Unauthorised</h1>
-          <p className="text-muted-foreground mb-4">
-            Access denied. Please provide a valid admin token.
-          </p>
-          <Link to="/" className="text-primary hover:underline">
-            Return home
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   const generateBlogPost = async () => {
     const topic = customTopic || selectedTopic;
@@ -149,148 +130,133 @@ CONTENT: [The full blog post content with proper paragraphs]`,
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container-wide px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <Link
-              to="/admin/content?token=drain-admin-2024"
-              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-2"
+    <AdminLayout 
+      title="Blog Scheduler" 
+      description="Generate AI-powered blog posts for your drainage website"
+    >
+      <div className="grid lg:grid-cols-2 gap-8">
+        {/* Generator Form */}
+        <div className="bg-card p-6 rounded-xl">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <Plus className="h-5 w-5" />
+            Generate New Post
+          </h2>
+
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                Category (optional)
+              </label>
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {TOPIC_CATEGORIES.map((cat) => (
+                    <SelectItem key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                Target Location (optional)
+              </label>
+              <Select value={targetLocation} onValueChange={setTargetLocation}>
+                <SelectTrigger>
+                  <SelectValue placeholder="General (all areas)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">General (all areas)</SelectItem>
+                  {LOCATIONS.map((loc) => (
+                    <SelectItem key={loc.slug} value={loc.slug}>
+                      {loc.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                Word Count
+              </label>
+              <Select value={wordCount} onValueChange={setWordCount}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="short">Short (400-600 words)</SelectItem>
+                  <SelectItem value="medium">Medium (700-900 words)</SelectItem>
+                  <SelectItem value="long">Long (1000-1500 words)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                Custom Topic
+              </label>
+              <Input
+                placeholder="Enter your own topic..."
+                value={customTopic}
+                onChange={(e) => {
+                  setCustomTopic(e.target.value);
+                  setSelectedTopic("");
+                }}
+              />
+            </div>
+
+            <Button
+              onClick={generateBlogPost}
+              disabled={isGenerating || (!customTopic && !selectedTopic)}
+              className="w-full"
             >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Content Manager
-            </Link>
-            <h1 className="text-3xl font-bold">Blog Scheduler</h1>
-            <p className="text-muted-foreground mt-1">
-              Generate AI-powered blog posts for your drainage website
-            </p>
+              {isGenerating ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                "Generate Blog Post"
+              )}
+            </Button>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Generator Form */}
-          <div className="bg-card p-6 rounded-xl">
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Plus className="h-5 w-5" />
-              Generate New Post
-            </h2>
-
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Category (optional)
-                </label>
-                <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {TOPIC_CATEGORIES.map((cat) => (
-                      <SelectItem key={cat.value} value={cat.value}>
-                        {cat.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Target Location (optional)
-                </label>
-                <Select value={targetLocation} onValueChange={setTargetLocation}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="General (all areas)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">General (all areas)</SelectItem>
-                    {LOCATIONS.map((loc) => (
-                      <SelectItem key={loc.slug} value={loc.slug}>
-                        {loc.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Word Count
-                </label>
-                <Select value={wordCount} onValueChange={setWordCount}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="short">Short (400-600 words)</SelectItem>
-                    <SelectItem value="medium">Medium (700-900 words)</SelectItem>
-                    <SelectItem value="long">Long (1000-1500 words)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Custom Topic
-                </label>
-                <Input
-                  placeholder="Enter your own topic..."
-                  value={customTopic}
-                  onChange={(e) => {
-                    setCustomTopic(e.target.value);
-                    setSelectedTopic("");
-                  }}
-                />
-              </div>
-
-              <Button
-                onClick={generateBlogPost}
-                disabled={isGenerating || (!customTopic && !selectedTopic)}
-                className="w-full"
+        {/* Suggested Topics */}
+        <div className="bg-card p-6 rounded-xl">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <Lightbulb className="h-5 w-5" />
+            Suggested Topics
+          </h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            Click a topic to select it, then generate.
+          </p>
+          <div className="space-y-2">
+            {SUGGESTED_TOPICS.map((topic, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setSelectedTopic(topic);
+                  setCustomTopic("");
+                }}
+                className={`w-full text-left p-3 rounded-lg text-sm transition-colors ${
+                  selectedTopic === topic
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted hover:bg-muted/70"
+                }`}
               >
-                {isGenerating ? (
-                  <>
-                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  "Generate Blog Post"
-                )}
-              </Button>
-            </div>
-          </div>
-
-          {/* Suggested Topics */}
-          <div className="bg-card p-6 rounded-xl">
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Lightbulb className="h-5 w-5" />
-              Suggested Topics
-            </h2>
-            <p className="text-sm text-muted-foreground mb-4">
-              Click a topic to select it, then generate.
-            </p>
-            <div className="space-y-2">
-              {SUGGESTED_TOPICS.map((topic, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setSelectedTopic(topic);
-                    setCustomTopic("");
-                  }}
-                  className={`w-full text-left p-3 rounded-lg text-sm transition-colors ${
-                    selectedTopic === topic
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted hover:bg-muted/70"
-                  }`}
-                >
-                  {topic}
-                </button>
-              ))}
-            </div>
+                {topic}
+              </button>
+            ))}
           </div>
         </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

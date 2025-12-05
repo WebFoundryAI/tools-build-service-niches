@@ -22,6 +22,8 @@ import Terms from "./pages/Terms";
 import Cookies from "./pages/Cookies";
 import AdminContent from "./pages/AdminContent";
 import AdminBlogScheduler from "./pages/AdminBlogScheduler";
+import AdminRebrand from "./pages/AdminRebrand";
+import AdminExport from "./pages/AdminExport";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,6 +54,8 @@ const App = () => (
           <Route path="/cookies" element={<Cookies />} />
           <Route path="/admin/content" element={<AdminContent />} />
           <Route path="/admin/blog-scheduler" element={<AdminBlogScheduler />} />
+          <Route path="/admin/rebrand" element={<AdminRebrand />} />
+          <Route path="/admin/export" element={<AdminExport />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
