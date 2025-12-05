@@ -1,9 +1,7 @@
 // Admin authentication configuration
 // Add admin email addresses here - these users will have access to the admin area
 export const ADMIN_EMAILS: string[] = [
-  // Add your admin email addresses here, e.g.:
-  // "admin@example.com",
-  // "owner@yourdomain.co.uk",
+  "cloudventuresonline@gmail.com",
 ];
 
 // Check if an email is in the admin list
