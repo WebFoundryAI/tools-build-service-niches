@@ -14,6 +14,7 @@ import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import Sitemap from "./pages/Sitemap";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/faq" element={<FAQ />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/sitemap" element={<Sitemap />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

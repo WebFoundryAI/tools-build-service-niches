@@ -1,12 +1,22 @@
 import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { LeadForm } from "@/components/forms/LeadForm";
-import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { MapSection } from "@/components/sections/MapSection";
 import { CTASection } from "@/components/sections/CTASection";
-import { getLocationBySlug, LOCATIONS } from "@/config/locations";
+import { AIContentBlock } from "@/components/ai/AIContentBlock";
+import { SchemaScript } from "@/components/seo/SchemaScript";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { Breadcrumbs } from "@/components/nav/Breadcrumbs";
+import { getLocationBySlug, LOCATIONS, PRIMARY_LOCATION } from "@/config/locations";
+import { SERVICES } from "@/config/services";
 import { BRAND } from "@/config/brand";
-import { ArrowLeft, MapPin } from "lucide-react";
+import { getLocationSEO } from "@/config/seo";
+import {
+  generateLocalBusinessSchema,
+  generatePlaceSchema,
+  generateBreadcrumbSchema,
+} from "@/lib/schema";
+import { ArrowLeft, MapPin, Wrench } from "lucide-react";
 
 const LocationDetail = () => {
   const { locationSlug } = useParams<{ locationSlug: string }>();
@@ -26,9 +36,26 @@ const LocationDetail = () => {
   }
 
   const otherLocations = LOCATIONS.filter((l) => l.slug !== location.slug).slice(0, 4);
+  const breadcrumbItems = [
+    { label: "Areas", href: "/locations" },
+    { label: location.name },
+  ];
 
   return (
     <Layout>
+      <SEOHead metadata={getLocationSEO(location)} />
+      <SchemaScript
+        schema={[
+          generateLocalBusinessSchema(location),
+          generatePlaceSchema(location),
+          generateBreadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Areas", url: "/locations" },
+            { name: location.name, url: `/location/${location.slug}` },
+          ]),
+        ]}
+      />
+
       <section className="hero-section">
         <div className="hero-overlay py-16 md:py-20">
           <div className="container-wide px-4">
@@ -47,10 +74,11 @@ const LocationDetail = () => {
                 </span>
               </div>
               <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                Drainage Services in {location.name}
+                Drain Services in {location.name}
               </h1>
               <p className="text-lg text-primary-foreground/80 max-w-2xl">
-                Professional drain unblocking and repairs in {location.name}. 24/7 emergency service, no call-out fee.
+                Professional drain unblocking and repairs in {location.name}. 24/7
+                emergency service, no call-out fee.
               </p>
             </div>
           </div>
@@ -59,18 +87,51 @@ const LocationDetail = () => {
 
       <section className="section-padding">
         <div className="container-wide px-4">
+          <Breadcrumbs items={breadcrumbItems} />
+
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2">
               <h2 className="text-2xl font-bold mb-4">
                 {BRAND.brandName} in {location.name}
               </h2>
-              <p className="text-muted-foreground mb-6">
-                Need a reliable drainage specialist in {location.name}? {BRAND.brandName} provides fast, professional drainage services to homes and businesses throughout {location.name} and the surrounding area.
-              </p>
-              <p className="text-muted-foreground mb-6">
-                From blocked toilets and sinks to full CCTV drain surveys, our experienced team has the equipment and expertise to handle any drainage issue. We offer 24/7 emergency callouts with no call-out fee and fixed pricing.
-              </p>
 
+              <AIContentBlock
+                type="location"
+                keyParts={[location.slug]}
+                templateName="locationPage"
+                variables={{
+                  brandName: BRAND.brandName,
+                  primaryLocationName: PRIMARY_LOCATION.name,
+                  serviceAreaLabel: BRAND.serviceAreaLabel,
+                  locationName: location.name,
+                }}
+                fallback={`Need a reliable drainage specialist in ${location.name}? ${BRAND.brandName} provides fast, professional drainage services to homes and businesses throughout ${location.name} and the surrounding area.`}
+              />
+
+              {/* Services in this location */}
+              <h3 className="text-xl font-bold mt-10 mb-4 flex items-center gap-2">
+                <Wrench className="h-5 w-5 text-primary" />
+                Our Services in {location.name}
+              </h3>
+              <div className="grid sm:grid-cols-2 gap-3 mb-8">
+                {SERVICES.map((service) => (
+                  <Link
+                    key={service.slug}
+                    to={`/location/${location.slug}/${service.slug}`}
+                    className="flex items-center gap-3 p-4 bg-muted rounded-lg hover:bg-muted/70 transition-colors"
+                  >
+                    <span className="text-2xl">{service.icon}</span>
+                    <div>
+                      <span className="font-medium block">{service.name}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {service.shortLabel}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              {/* Other locations */}
               <h3 className="text-xl font-bold mt-8 mb-4">Other Areas We Cover</h3>
               <div className="grid sm:grid-cols-2 gap-3">
                 {otherLocations.map((l) => (
@@ -84,19 +145,44 @@ const LocationDetail = () => {
                   </Link>
                 ))}
               </div>
+
+              {/* Internal links */}
+              <div className="mt-8 pt-6 border-t border-border">
+                <p className="text-sm text-muted-foreground">
+                  <Link to="/" className="text-primary hover:underline">
+                    Home
+                  </Link>
+                  {" · "}
+                  <Link to="/services" className="text-primary hover:underline">
+                    All Services
+                  </Link>
+                  {" · "}
+                  <Link to="/locations" className="text-primary hover:underline">
+                    All Areas
+                  </Link>
+                  {" · "}
+                  <Link to="/contact" className="text-primary hover:underline">
+                    Contact Us
+                  </Link>
+                </p>
+              </div>
             </div>
 
             <div>
               <div className="bg-card p-6 rounded-xl card-elevated sticky top-24">
-                <h3 className="text-xl font-bold mb-4">Get a Quote in {location.name}</h3>
-                <LeadForm sourcePage={`location-${location.slug}`} defaultLocation={location.slug} />
+                <h3 className="text-xl font-bold mb-4">
+                  Get a Quote in {location.name}
+                </h3>
+                <LeadForm
+                  sourcePage={`location-${location.slug}`}
+                  defaultLocation={location.slug}
+                />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <ServicesGrid location={location.slug} />
       <MapSection location={location} />
       <CTASection />
     </Layout>

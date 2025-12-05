@@ -1,5 +1,6 @@
 import { LocationConfig } from "@/config/locations";
 import { buildStaticMapUrl } from "@/lib/mapHelpers";
+import { BRAND } from "@/config/brand";
 import { MapPin } from "lucide-react";
 
 interface MapSectionProps {
@@ -17,14 +18,14 @@ export function MapSection({ location }: MapSectionProps) {
             Our Coverage in {location.name}
           </h2>
           <p className="text-muted-foreground">
-            {location.countyOrRegion && `${location.name}, ${location.countyOrRegion}`}
+            {BRAND.serviceAreaLabel}
           </p>
         </div>
 
-        <div className="relative rounded-xl overflow-hidden shadow-lg">
+        <div className="relative rounded-xl overflow-hidden shadow-lg max-w-4xl mx-auto">
           <img
             src={mapUrl}
-            alt={`Map showing ${location.name} service area`}
+            alt={`Drain service area map for ${location.name} showing coverage by ${BRAND.brandName}`}
             className="w-full h-auto"
             loading="lazy"
           />
@@ -33,6 +34,10 @@ export function MapSection({ location }: MapSectionProps) {
             <span className="font-medium">{location.name}</span>
           </div>
         </div>
+
+        <p className="text-center text-sm text-muted-foreground mt-4">
+          Serving {location.name} and {BRAND.serviceAreaLabel}
+        </p>
       </div>
     </section>
   );

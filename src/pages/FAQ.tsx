@@ -1,10 +1,13 @@
 import { Layout } from "@/components/layout/Layout";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { CTASection } from "@/components/sections/CTASection";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { getFAQSEO } from "@/config/seo";
 
 const FAQ = () => {
   return (
     <Layout>
+      <SEOHead metadata={getFAQSEO()} />
       <section className="hero-section">
         <div className="hero-overlay py-16 md:py-20">
           <div className="container-wide px-4 text-center text-primary-foreground">
