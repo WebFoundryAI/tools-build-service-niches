@@ -73,9 +73,49 @@ Before generating content, admins must confirm:
 - "Thin content" warnings highlight pages that need improvement
 - Pages marked as non-indexable output `<meta name="robots" content="noindex">` tags
 
-#### 6. Review Status Indicators
-- Visual badges show "Needs Review" and "Thin Content" in admin
-- Summary counts of unreviewed content
+#### 6. Quality Scoring System (Green/Amber/Red)
+
+Every AI-generated page receives an at-a-glance quality status:
+
+| Status | Meaning |
+|--------|---------|
+| 🟢 **Green** | Meets all thresholds, reviewed, ready for indexing |
+| 🟡 **Amber** | Needs improvement – missing signals or not yet reviewed |
+| 🔴 **Red** | Not ready – thin content, unreviewed, or highly duplicate |
+
+Quality is based on these signals:
+
+1. **Text Depth** – Word count thresholds per page type:
+   - Service-in-location: target 700+, warn < 500, critical < 300
+   - Location pages: target 500+, warn < 350
+   - Service pages: target 600+, warn < 400
+   - Sub-service pages: target 400+, warn < 250
+   - Blog posts: target 900+, warn < 600, critical < 400
+
+2. **Local Specificity** – For location-bound pages:
+   - Mentions primary town/city
+   - References nearby areas from config
+   - Includes local context (property types, area details)
+
+3. **Internal Linking** – Expected links vary by page type:
+   - Service-in-location: links to service, location, and contact
+   - Blog posts: links to related services and blog index
+
+4. **Uniqueness** – Detects near-duplicate content:
+   - Flags identical introductions/conclusions across pages
+   - Warns when pages look like boilerplate with only location swaps
+
+5. **Review Status** – Human review confirmation
+
+#### 7. Quality Dashboard
+The admin area displays a summary dashboard showing:
+- Green/Amber/Red counts per page type
+- Number of pages that are indexable but have quality issues
+- Clear warnings about scaled content risks
+
+#### 8. Review Status Indicators
+- Visual quality badges in admin lists
+- Hover tooltips explain specific issues
 - Easy one-click "Mark as Reviewed" actions
 
 ### Recommended Workflow
