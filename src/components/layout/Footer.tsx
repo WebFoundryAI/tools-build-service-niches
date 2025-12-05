@@ -3,6 +3,7 @@ import { BRAND } from "@/config/brand";
 import { SERVICES } from "@/config/services";
 import { LOCATIONS } from "@/config/locations";
 import { Phone, Mail, MapPin } from "lucide-react";
+import { PopularLinks } from "@/components/sections/PopularLinks";
 
 export function Footer() {
   return (
@@ -14,11 +15,17 @@ export function Footer() {
             <h3 className="text-xl font-bold mb-4">{BRAND.brandName}</h3>
             <p className="text-background/70 text-sm mb-4">{BRAND.tagline}</p>
             <div className="space-y-2 text-sm">
-              <a href={`tel:${BRAND.phone}`} className="flex items-center gap-2 text-background/80 hover:text-accent transition-colors">
+              <a
+                href={`tel:${BRAND.phone}`}
+                className="flex items-center gap-2 text-background/80 hover:text-accent transition-colors"
+              >
                 <Phone className="h-4 w-4" />
                 {BRAND.phone}
               </a>
-              <a href={`mailto:${BRAND.email}`} className="flex items-center gap-2 text-background/80 hover:text-accent transition-colors">
+              <a
+                href={`mailto:${BRAND.email}`}
+                className="flex items-center gap-2 text-background/80 hover:text-accent transition-colors"
+              >
                 <Mail className="h-4 w-4" />
                 {BRAND.email}
               </a>
@@ -73,33 +80,88 @@ export function Footer() {
             <h4 className="font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/about" className="text-background/70 hover:text-accent transition-colors">
+                <Link
+                  to="/about"
+                  className="text-background/70 hover:text-accent transition-colors"
+                >
                   About Us
                 </Link>
               </li>
               <li>
-                <Link to="/faq" className="text-background/70 hover:text-accent transition-colors">
+                <Link
+                  to="/faq"
+                  className="text-background/70 hover:text-accent transition-colors"
+                >
                   FAQs
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-background/70 hover:text-accent transition-colors">
+                <Link
+                  to="/contact"
+                  className="text-background/70 hover:text-accent transition-colors"
+                >
                   Contact Us
                 </Link>
               </li>
               <li>
-                <Link to="/blog" className="text-background/70 hover:text-accent transition-colors">
+                <Link
+                  to="/blog"
+                  className="text-background/70 hover:text-accent transition-colors"
+                >
                   Blog
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/sitemap"
+                  className="text-background/70 hover:text-accent transition-colors"
+                >
+                  Sitemap
+                </Link>
+              </li>
+            </ul>
+
+            {/* Legal links */}
+            <h4 className="font-semibold mb-3 mt-6">Legal</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link
+                  to="/privacy"
+                  className="text-background/70 hover:text-accent transition-colors"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/terms"
+                  className="text-background/70 hover:text-accent transition-colors"
+                >
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/cookies"
+                  className="text-background/70 hover:text-accent transition-colors"
+                >
+                  Cookie Policy
                 </Link>
               </li>
             </ul>
           </div>
         </div>
 
+        <PopularLinks />
+
         <div className="border-t border-background/20 mt-10 pt-6 text-center text-sm text-background/60">
           <p>
             © {new Date().getFullYear()} {BRAND.brandName}. All rights reserved.
-            {BRAND.companyNumber && <span className="block mt-1">Company No: {BRAND.companyNumber}</span>}
+            {BRAND.companyNumber && (
+              <span className="block mt-1">
+                Company No: {BRAND.companyNumber}
+              </span>
+            )}
           </p>
         </div>
       </div>

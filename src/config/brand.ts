@@ -1,3 +1,18 @@
+export type SocialLinks = {
+  facebook?: string;
+  twitter?: string;
+  instagram?: string;
+  linkedin?: string;
+  youtube?: string;
+};
+
+export type OpeningHours = {
+  weekdays: string;
+  saturday: string;
+  sunday: string;
+  emergencyNote: string;
+};
+
 export type BrandConfig = {
   brandName: string;
   domain: string;
@@ -15,6 +30,9 @@ export type BrandConfig = {
   logoUrl?: string;
   tagline: string;
   emergencyAvailable: boolean;
+  socialLinks: SocialLinks;
+  openingHours: OpeningHours;
+  showMobileCallBar: boolean;
 };
 
 export const BRAND: BrandConfig = {
@@ -34,4 +52,18 @@ export const BRAND: BrandConfig = {
   logoUrl: "",
   tagline: "Fast, Reliable Drainage Solutions",
   emergencyAvailable: true,
+  showMobileCallBar: true,
+  socialLinks: {
+    facebook: "",
+    twitter: "",
+    instagram: "",
+    linkedin: "",
+    youtube: "",
+  },
+  openingHours: {
+    weekdays: "8:00 AM - 6:00 PM",
+    saturday: "9:00 AM - 4:00 PM",
+    sunday: "Emergency only",
+    emergencyNote: "24/7 Emergency Callouts Available",
+  },
 };
