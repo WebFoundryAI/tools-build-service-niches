@@ -1,42 +1,68 @@
 import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { CTASection } from "@/components/sections/CTASection";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { SchemaScript } from "@/components/seo/SchemaScript";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Breadcrumbs } from "@/components/nav/Breadcrumbs";
+import { BRAND } from "@/config/brand";
+import { generateBlogPostSchema } from "@/lib/schema";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 
-// Placeholder - will be replaced with dynamic content
-const blogContent: Record<string, { title: string; content: string; date: string }> = {
-  "signs-of-blocked-drain": {
-    title: "5 Signs You Have a Blocked Drain",
-    date: "2024-01-15",
-    content: `
-      <p>A blocked drain can quickly turn from a minor inconvenience into a major problem if left untreated. Here are five warning signs to watch out for:</p>
-      
-      <h2>1. Slow Draining Water</h2>
-      <p>If water is taking longer than usual to drain from your sink, bath, or shower, it's often the first sign of a developing blockage.</p>
-      
-      <h2>2. Unpleasant Odours</h2>
-      <p>Bad smells coming from your drains are a clear indicator that something is wrong. This is often caused by food waste, grease, or other debris decomposing in your pipes.</p>
-      
-      <h2>3. Gurgling Sounds</h2>
-      <p>Strange gurgling noises from your drains or toilet can indicate that air is trapped in your drainage system due to a blockage.</p>
-      
-      <h2>4. Raised Water Levels</h2>
-      <p>If the water level in your toilet bowl is higher or lower than usual, or fluctuates, this could signal a blockage in your drainage system.</p>
-      
-      <h2>5. Multiple Blocked Fixtures</h2>
-      <p>If more than one fixture in your home is draining slowly or backing up, you may have a blockage in your main drain.</p>
-      
-      <h2>What To Do Next</h2>
-      <p>If you're experiencing any of these symptoms, it's best to call in a professional before the problem gets worse. Our team can quickly diagnose and clear any blockage, getting your drains flowing freely again.</p>
-    `,
-  },
-};
+interface BlogPostData {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  created_at: string;
+}
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
-  const post = slug ? blogContent[slug] : null;
 
-  if (!post) {
+  const { data: post, isLoading, error } = useQuery({
+    queryKey: ["blog-post", slug],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("blog_posts")
+        .select("*")
+        .eq("slug", slug)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data as BlogPostData | null;
+    },
+    enabled: !!slug,
+  });
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <section className="hero-section">
+          <div className="hero-overlay py-16 md:py-20">
+            <div className="container-narrow px-4">
+              <Skeleton className="h-6 w-24 mb-6" />
+              <Skeleton className="h-4 w-32 mb-2" />
+              <Skeleton className="h-12 w-full" />
+            </div>
+          </div>
+        </section>
+        <section className="section-padding">
+          <div className="container-narrow px-4 space-y-4">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-[95%]" />
+            <Skeleton className="h-4 w-[90%]" />
+            <Skeleton className="h-4 w-full" />
+          </div>
+        </section>
+      </Layout>
+    );
+  }
+
+  if (!post || error) {
     return (
       <Layout>
         <div className="section-padding text-center">
@@ -49,8 +75,42 @@ const BlogPost = () => {
     );
   }
 
+  const breadcrumbItems = [
+    { label: "Blog", href: "/blog" },
+    { label: post.title },
+  ];
+
+  // Convert markdown-style bold to HTML
+  const formatContent = (content: string) => {
+    return content
+      .split("\n\n")
+      .map((paragraph) => {
+        const formatted = paragraph
+          .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+          .replace(/\n/g, "<br />");
+        return `<p>${formatted}</p>`;
+      })
+      .join("");
+  };
+
   return (
     <Layout>
+      <SEOHead
+        metadata={{
+          title: `${post.title} | ${BRAND.brandName} Blog`,
+          description: post.excerpt,
+          canonicalUrl: `/blog/${post.slug}`,
+        }}
+      />
+      <SchemaScript
+        schema={generateBlogPostSchema(
+          post.title,
+          post.excerpt,
+          post.slug,
+          post.created_at
+        )}
+      />
+
       <section className="hero-section">
         <div className="hero-overlay py-16 md:py-20">
           <div className="container-narrow px-4">
@@ -63,13 +123,15 @@ const BlogPost = () => {
             </Link>
             <div className="text-primary-foreground">
               <time className="text-primary-foreground/70">
-                {new Date(post.date).toLocaleDateString("en-GB", {
+                {new Date(post.created_at).toLocaleDateString("en-GB", {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
                 })}
               </time>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-2">{post.title}</h1>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-2">
+                {post.title}
+              </h1>
             </div>
           </div>
         </div>
@@ -77,10 +139,33 @@ const BlogPost = () => {
 
       <section className="section-padding">
         <div className="container-narrow px-4">
+          <Breadcrumbs items={breadcrumbItems} />
+
           <article
-            className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground"
+            dangerouslySetInnerHTML={{ __html: formatContent(post.content) }}
           />
+
+          {/* Internal links */}
+          <div className="mt-12 pt-8 border-t border-border">
+            <p className="text-sm text-muted-foreground">
+              <Link to="/" className="text-primary hover:underline">
+                Home
+              </Link>
+              {" · "}
+              <Link to="/blog" className="text-primary hover:underline">
+                All Posts
+              </Link>
+              {" · "}
+              <Link to="/services" className="text-primary hover:underline">
+                Services
+              </Link>
+              {" · "}
+              <Link to="/contact" className="text-primary hover:underline">
+                Contact
+              </Link>
+            </p>
+          </div>
         </div>
       </section>
 
