@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { AIContentPolicyPanel } from "@/components/admin/AIContentPolicyPanel";
 import { FileText, Calendar, Settings, Download } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -33,6 +34,8 @@ const adminTools = [
 const Admin = () => {
   return (
     <AdminLayout title="Admin Dashboard" description="Manage your site settings and content">
+      <AIContentPolicyPanel />
+      
       <div className="grid md:grid-cols-2 gap-6">
         {adminTools.map((tool) => {
           const Icon = tool.icon;

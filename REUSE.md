@@ -22,6 +22,95 @@ This approach:
 
 ---
 
+## Responsible AI Content Usage
+
+**IMPORTANT:** This template includes AI content generation capabilities. Please read this section carefully to ensure responsible usage aligned with Google's guidelines.
+
+### Google's Position on AI Content
+
+Google allows AI-generated content **when it is**:
+- **High-quality** – useful, accurate, and well-written
+- **Original** – not duplicated across many sites
+- **People-first** – created to help users, not just to rank in search
+
+Google considers it **spam** when:
+- Automation is used to create **many low-value pages** at scale
+- Content is generated **without meaningful human review**
+- Pages exist primarily to **manipulate search rankings**
+
+This is called **"scaled content abuse"** and can result in manual penalties or algorithmic demotions.
+
+### Built-in Safety Rails
+
+This template includes several features to help you stay aligned with Google's guidance:
+
+#### 1. AI Content Policy Panel
+Every admin page displays a reminder about responsible AI content usage, Google's guidelines, and recommended workflows.
+
+#### 2. Who/How/Why Metadata Tracking
+All AI-generated content stores:
+- `how_created` – Method of creation (AI-assisted)
+- `why_created` – Admin's stated purpose for creating the content
+- `human_reviewed` – Whether content has been reviewed
+- `reviewed_by` / `reviewed_at` – Review audit trail
+
+This aligns with Google's "Who, How, Why" guidance for AI content transparency.
+
+#### 3. Quality Checklist Before Generation
+Before generating content, admins must confirm:
+- They will review and edit the content
+- Each page will include unique local details
+- They understand the risks of scaled low-value content
+
+#### 4. Batch Size Limits
+- Maximum 10 items per bulk generation
+- Warnings when exceeding recommended limits
+- Encourages smaller, reviewable batches
+
+#### 5. Indexing Control
+- All generated content defaults to **non-indexable**
+- Admins must explicitly enable indexing per page
+- "Thin content" warnings highlight pages that need improvement
+- Pages marked as non-indexable output `<meta name="robots" content="noindex">` tags
+
+#### 6. Review Status Indicators
+- Visual badges show "Needs Review" and "Thin Content" in admin
+- Summary counts of unreviewed content
+- Easy one-click "Mark as Reviewed" actions
+
+### Recommended Workflow
+
+1. **Generate in small batches** (5-10 pages maximum)
+2. **Review every page** – edit for accuracy, tone, and local relevance
+3. **Add unique local details**:
+   - Real photos of your work
+   - Case studies from actual jobs
+   - Verified customer testimonials
+   - Specific local area knowledge
+4. **Mark as reviewed** once you're satisfied
+5. **Enable indexing** only for pages you're proud of
+6. **Monitor performance** and improve underperforming pages
+
+### What NOT To Do
+
+❌ Generate hundreds of pages in one session  
+❌ Enable indexing without reviewing content  
+❌ Leave generated content unchanged  
+❌ Create near-duplicate pages for every possible keyword  
+❌ Ignore "thin content" warnings  
+❌ Skip the quality checklist  
+
+### Your Responsibility
+
+These safety rails are **guidance tools**, not absolute blocks. Final responsibility for content quality lies with the site operator. If you publish low-quality content at scale, search engines may:
+- Demote your pages in rankings
+- Apply manual spam actions
+- Remove pages from the index entirely
+
+**Treat AI as a starting point, not a finished product.**
+
+---
+
 ## Steps to Spin Up a New Site
 
 ### 1. Duplicate the Lovable Project
@@ -42,18 +131,15 @@ In the new project's Lovable Cloud settings, configure:
 | `GEMINI_API_KEY` | If using Gemini | Only if switching from Lovable AI |
 | `GOOGLE_STATIC_MAPS_API_KEY` | Optional | For real map images |
 
-### 3. Access the Rebrand Wizard
+### 3. Access the Admin Area
 
-Navigate to:
-```
-/admin/rebrand?token=drain-admin-2024
-```
+Navigate to `/login` and sign in with an admin email address.
 
-⚠️ **Important:** Change the admin token in production by editing the `ADMIN_TOKEN` constant in the admin files.
+Admin emails are configured in `src/config/adminAuth.ts`. Add your email to the `ADMIN_EMAILS` array.
 
 ### 4. Configure the New Brand
 
-Use the wizard to set:
+Use the Rebrand Wizard (`/admin/rebrand`) to set:
 
 **Step 1 - Brand Basics**
 - Company name, domain, phone, email
@@ -101,6 +187,7 @@ After rebranding:
 1. Visit key pages to trigger AI content generation
 2. Use `/admin/content` to monitor content cache
 3. Use `/admin/blog-scheduler` to create blog posts
+4. **Review all generated content before enabling indexing**
 
 ### 7. Submit to Search Engines
 
@@ -120,7 +207,7 @@ After rebranding:
 
 If you want to prepare a configuration for a buyer without modifying the current project:
 
-1. Go to `/admin/rebrand?token=drain-admin-2024`
+1. Go to `/admin/rebrand`
 2. Complete all wizard steps
 3. On Step 6, click **"Download JSON"** or **"Copy to Clipboard"**
 4. This exports the complete configuration
@@ -146,6 +233,7 @@ Use `/admin/rebrand` → Step 6 to verify:
 - [ ] AI content is generated (5+ pages)
 - [ ] Blog posts exist (3+)
 - [ ] Sitemap is accessible
+- [ ] **Content has been reviewed and is indexable**
 
 ### Handover Process
 
@@ -161,25 +249,26 @@ Use `/admin/rebrand` → Step 6 to verify:
    - Include this `REUSE.md` file
    - Include the main `README.md`
    - Provide the exported configuration snapshot
+   - **Brief buyer on responsible AI content usage**
 
 4. **Clear Previous Data (Optional)**
    - Use `/admin/rebrand` → Data Reset
    - Clear leads if they shouldn't transfer
    - Clear blog posts if starting fresh
 
-5. **Update Admin Token**
-   - Change `ADMIN_TOKEN` to a new value
-   - Provide new token to buyer
+5. **Update Admin Access**
+   - Add buyer's email to `ADMIN_EMAILS` in `src/config/adminAuth.ts`
+   - Remove your email if transferring fully
 
 ### What the Buyer Receives
 
 - Complete, working drainage lead-gen website
-- AI-powered content generation
+- AI-powered content generation with safety rails
 - Multi-location SEO structure
-- Blog system
+- Blog system with review workflow
 - Lead capture forms
 - Admin tools for content management
-- Full documentation
+- Full documentation including responsible usage guidelines
 
 ---
 
@@ -192,6 +281,7 @@ Use `/admin/rebrand` → Step 6 to verify:
 | `/src/config/services.ts` | Services and sub-services |
 | `/src/config/maps.ts` | Map provider settings |
 | `/src/config/aiProvider.ts` | AI provider selection |
+| `/src/config/adminAuth.ts` | Admin email whitelist |
 | `/src/config/trust.ts` | Trust badges and guarantees |
 | `/src/config/aiPrompts.ts` | AI content templates |
 
@@ -212,11 +302,17 @@ Use `/admin/rebrand` → Step 6 to verify:
 1. Verify sitemap at `/sitemap.xml`
 2. Check robots.txt at `/robots.txt`
 3. Review schema using Google's Rich Results Test
+4. **Ensure pages are marked as indexable in admin**
 
 ### Admin Access Issues
-1. Ensure token is correct in URL
-2. Check `ADMIN_TOKEN` constant matches
+1. Ensure your email is in `ADMIN_EMAILS` array
+2. Sign in at `/login`
 3. Clear browser cache if issues persist
+
+### Content Not Indexing
+1. Check the indexable toggle in admin
+2. Non-indexable pages have `noindex` meta tags
+3. Review and improve thin content before enabling
 
 ---
 
@@ -229,4 +325,4 @@ For template support:
 
 ---
 
-*This template is designed for resale. Each deployment should be treated as a separate instance for a single brand/client.*
+*This template is designed for resale. Each deployment should be treated as a separate instance for a single brand/client. Always use AI content responsibly and in accordance with search engine guidelines.*

@@ -6,6 +6,7 @@ export interface SEOMetadata {
   title: string;
   description: string;
   canonicalUrl?: string;
+  noIndex?: boolean;
 }
 
 export function getHomeSEO(): SEOMetadata {
