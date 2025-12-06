@@ -119,6 +119,14 @@ export function Footer() {
                   Sitemap
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/admin"
+                  className="text-background/70 hover:text-accent transition-colors"
+                >
+                  Admin
+                </Link>
+              </li>
             </ul>
 
             {/* Legal links */}
